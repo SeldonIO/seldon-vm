@@ -7,9 +7,7 @@ STARTUP_DIR="$( cd "$( dirname "$0" )" && pwd )"
 DIST_DIR=${STARTUP_DIR}/..
 
 recreate_local_models() {
-    rm -rfv local-models
-    mkdir local-models
-    tar xf resources/movielens_demo.tar.gz -C local-models
+    mkdir -p local-models
 }
 
 cd ${DIST_DIR}
