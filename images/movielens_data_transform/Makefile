@@ -8,7 +8,7 @@ dummy:
 
 freebase_data/freebase.json:
 	mkdir -p freebase_data
-	aws s3 cp s3://static.seldon.io/datasets/freebase-movies/freebase.json freebase_data/freebase.json 
+	cd freebase_data ; wget http://s3-eu-west-1.amazonaws.com/static.seldon.io/datasets/freebase-movies/freebase.json ; cd .. 
 
 build_image: freebase_data/freebase.json
 	docker build -t ${IMAGE_NAME} .

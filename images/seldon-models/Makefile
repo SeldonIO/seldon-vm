@@ -6,11 +6,7 @@ PROJ_DIR=../..
 dummy:
 	@echo dummy
 
-movielens_demo:
-	@bash get-movielens-models.sh ${SELDON_VERSION}
-	@./setup-local-models-resource
-
-build_image: movielens_demo
+build_image: 
 	docker build --force-rm=true -t ${IMAGE_NAME} .
 
 push_to_registry:
@@ -19,7 +15,4 @@ push_to_registry:
 		docker push $(PRIVATE_REGISTRY_HOST):$(PRIVATE_REGISTRY_PORT)/$(IMAGE_NAME)
 
 clean:
-	@rm -rf movielens_demo.tar.gz
-	@rm -rfv movielens_demo
-	@./remove-local-models-resource
 
