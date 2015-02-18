@@ -1,0 +1,21 @@
+#!/bin/bash
+
+set -o nounset
+set -o errexit
+
+STARTUP_DIR="$( cd "$( dirname "$0" )" && pwd )"
+DIST_DIR=${STARTUP_DIR}/..
+
+recreate_local_models() {
+    rm -rfv local-models
+    mkdir local-models
+    tar xf resources/movielens_demo.tar.gz -C local-models
+}
+
+cd ${DIST_DIR}
+if [ ! -d "./local-models" ]; then
+    echo "-- re-building local-models --"
+    recreate_local_models
+else
+    echo "-- existing local-models --"
+fi

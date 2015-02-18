@@ -1,0 +1,47 @@
+#!/bin/bash
+
+set -o nounset
+set -o errexit
+
+# set some defults for log dir usage
+export USE_LOCAL_LOGS_DIR=${USE_LOCAL_LOGS_DIR:-}
+export USE_LOCAL_MYSQL_DATA_DIR=${USE_LOCAL_MYSQL_DATA_DIR-true}
+export USE_LOCAL_MODELS_DIR=${USE_LOCAL_MODELS_DIR-true}
+export REGISTRY_PREFIX=
+echo "*** startup env ***"
+echo "[USE_LOCAL_LOGS_DIR=${USE_LOCAL_LOGS_DIR}]"
+echo "[USE_LOCAL_MYSQL_DATA_DIR=${USE_LOCAL_MYSQL_DATA_DIR}]"
+echo "[USE_LOCAL_MODELS_DIR=${USE_LOCAL_MODELS_DIR}]"
+echo "[REGISTRY_PREFIX=${REGISTRY_PREFIX}]"
+echo "*******************"
+
+STARTUP_DIR="$( cd "$( dirname "$0" )" && pwd )"
+
+${STARTUP_DIR}/stop-all
+
+if [[ ${USE_LOCAL_LOGS_DIR} == "true" ]];then
+    ${STARTUP_DIR}/data-logs/start-data-logs ${STARTUP_DIR}/local-logs
+else
+    ${STARTUP_DIR}/data-logs/start-data-logs
+fi
+
+if [[ ${USE_LOCAL_MODELS_DIR} == "true" ]];then
+    ${STARTUP_DIR}/seldon-models/start-seldon-models ${STARTUP_DIR}/local-models
+else
+    ${STARTUP_DIR}/seldon-models/start-seldon-models
+fi
+
+if [[ ! ${USE_LOCAL_MYSQL_DATA_DIR} == "true" ]];then
+    ${STARTUP_DIR}/mysql_data/start-mysql-data
+fi
+
+${STARTUP_DIR}/memcache/start-memcache-server
+${STARTUP_DIR}/zookeeper/start-zookeeper-server
+${STARTUP_DIR}/consul/start-consul
+${STARTUP_DIR}/kafka/start-kafka-server
+${STARTUP_DIR}/mysql/start-mysql-server
+${STARTUP_DIR}/td-agent/start-td-agent-server
+${STARTUP_DIR}/spark/start-spark-streaming-server
+${STARTUP_DIR}/spark/start-spark-offline-server
+${STARTUP_DIR}/api-server/start-api-server-server
+

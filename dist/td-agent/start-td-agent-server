@@ -1,0 +1,16 @@
+#!/bin/bash
+
+set -o nounset
+set -o errexit
+
+STARTUP_DIR="$( cd "$( dirname "$0" )" && pwd )"
+
+echo "--- starting td-agent ---"
+
+docker run \
+    --name="td_agent_server_container" \
+    --volumes-from api_server_data_logs_container \
+    --link kafka_server_container:kafka \
+    -d \
+    ${REGISTRY_PREFIX}td_agent_image
+

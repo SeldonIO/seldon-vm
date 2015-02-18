@@ -1,0 +1,19 @@
+#!/bin/bash
+
+set -o nounset
+set -o errexit
+
+STARTUP_DIR="$( cd "$( dirname "$0" )" && pwd )"
+
+REGISTRY_PREFIX=
+
+if [[ $# < 1 ]]; then
+    docker exec -it mysql_server_container sh -c 'exec mysql -u root -p${MYSQL_ROOT_PASSWORD}'
+else
+    SQL_SCRIPT=$1
+    docker exec -it mysql_server_container sh -c 'exec mysql -u root -p${MYSQL_ROOT_PASSWORD} </workdir/'${SQL_SCRIPT}
+fi
+
+
+
+

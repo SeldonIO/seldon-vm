@@ -1,0 +1,187 @@
+#!/bin/bash
+
+set -o nounset
+set -o errexit
+
+STARTUP_DIR="$( cd "$( dirname "$0" )" && pwd )"
+
+HOST_IP=localhost:8080
+if [[ $(uname) == "Darwin" ]]; then
+    BOOT2DOCKER_HOST_IP=$(boot2docker ip 2> /dev/null)
+    HOST_IP=${BOOT2DOCKER_HOST_IP}:8080
+fi
+
+OAUTH_CONSUMER_KEY=tnedddvlho
+OAUTH_CONSUMER_SECRET=lzufhqbomz
+JS_CONSUMER_KEY=uggyecofcz
+
+DIMENSION=
+
+
+# get token
+CMD="http://${HOST_IP}/token?consumer_key=${OAUTH_CONSUMER_KEY}&consumer_secret=${OAUTH_CONSUMER_SECRET}"
+echo "$CMD"
+TOKEN_JSON=`curl -s ${CMD}`
+echo "token json = ${TOKEN_JSON}"
+TOKEN=`echo "${TOKEN_JSON}" | jq -r ".access_token"`
+echo "token = ${TOKEN}"
+
+NUMBER=$RANDOM
+USER=testuser${NUMBER}
+echo "Test user = ${USER}"
+
+# search for movies
+echo ""
+echo "get movies matching Star Wars as a keyword"
+echo ""
+CMD="http://${HOST_IP}/items?oauth_token=${TOKEN}&full=true&name=star%20wars&jsonpCallback=unused"
+echo "$CMD"
+echo ""
+curl $CMD
+echo ""
+
+#get meta data for movie
+echo ""
+echo "get meta data for move Star Wars"
+echo ""
+CMD="http://${HOST_IP}/items/260?oauth_token=${TOKEN}&full=true&jsonpCallback=unused"
+echo "$CMD"
+echo ""
+curl $CMD
+echo ""
+
+# add some actions
+echo ""
+echo "add initial action for ${USER}"
+echo ""
+CMD="http://${HOST_IP}/js/action/new?consumer_key=${JS_CONSUMER_KEY}&type=1&user=${USER}&item=260&timestamp=1417517896895&jsonpCallback="
+echo "$CMD"
+echo ""
+curl $CMD
+echo ""
+echo "sleep 3 secs"
+sleep 3
+echo ""
+echo "add same actions for demo test"
+echo ""
+curl "http://${HOST_IP}/js/action/new?consumer_key=${JS_CONSUMER_KEY}&type=1&user=${USER}&item=260&timestamp=1417517896895&jsonpCallback="
+curl "http://${HOST_IP}/js/action/new?consumer_key=${JS_CONSUMER_KEY}&type=1&user=${USER}&item=16&timestamp=1417517896895&jsonpCallback="
+echo ""
+echo "sleep 1 secs"
+sleep 1
+
+#get recent actions for user ${USER}
+echo ""
+echo "get recent actions for user ${USER}"
+echo ""
+CMD="http://${HOST_IP}/users/${USER}/actions?oauth_token=${TOKEN}&full=true&limit=10&jsonpCallback=unused"
+echo "$CMD"
+echo ""
+curl $CMD
+echo ""
+
+# recent similar items
+echo ""
+echo "running RECENT_SIMILAR_ITEMS with history of  Star Wars (id=260) and Casino (id=16)"
+echo ""
+CMD="http://${HOST_IP}/js/recommendations?consumer_key=${JS_CONSUMER_KEY}&user=${USER}&item=16&dimension=${DIMENSION}&limit=10&attributes=title,img_url,genre1&jsonpCallback=unused&algorithms=recommenders:RECENT_SIMILAR_ITEMS"
+echo "$CMD"
+echo ""
+curl $CMD
+echo ""
+
+# semantic vectors based on recent items
+echo ""
+echo "running SEMANTIC VECTORS on Star Wars (id=260) and Casino (id=16)"
+echo ""
+CMD="http://${HOST_IP}/js/recommendations?consumer_key=${JS_CONSUMER_KEY}&user=${USER}&item=260&dimension=${DIMENSION}&limit=10&attributes=title,img_url,genre1&jsonpCallback=unused&algorithms=recommenders:SEMANTIC_VECTORS%2Ctx_history_sv:4"
+echo "$CMD"
+echo ""
+curl $CMD
+echo ""
+
+# similar items based on current item
+echo ""
+echo "running SIMILAR_ITEMS on Star Wars (id=260)"
+echo ""
+CMD="http://${HOST_IP}/js/recommendations?consumer_key=${JS_CONSUMER_KEY}&user=test_user1&item=260&dimension=${DIMENSION}&limit=10&attributes=title,img_url,genre1&jsonpCallback=unused&algorithms=recommenders:SIMILAR_ITEMS"
+echo "$CMD"
+echo ""
+curl $CMD
+echo ""
+
+# semantic vectors based on current item
+echo ""
+echo "running SEMANTIC VECTORS on Star Wars (id=260)"
+echo ""
+CMD="http://${HOST_IP}/js/recommendations?consumer_key=${JS_CONSUMER_KEY}&user=test_user1&item=260&dimension=${DIMENSION}&limit=10&attributes=title,img_url,genre1&jsonpCallback=unused&algorithms=recommenders:SEMANTIC_VECTORS"
+echo "$CMD"
+echo ""
+curl $CMD
+echo ""
+
+# matrix factorization
+echo ""
+echo "running MATRIX_FACTOR on user 58"
+echo ""
+CMD="http://${HOST_IP}/js/recommendations?consumer_key=${JS_CONSUMER_KEY}&user=58&item=260&dimension=${DIMENSION}&limit=10&attributes=title,img_url,genre1&jsonpCallback=unused&algorithms=recommenders:MATRIX_FACTOR"
+echo "$CMD"
+echo ""
+curl $CMD
+echo ""
+
+# recent  matrix factorization (folding in items from recent user history)
+echo ""
+echo "running RECENT_MATRIX_FACTOR"
+echo ""
+CMD="http://${HOST_IP}/js/recommendations?consumer_key=${JS_CONSUMER_KEY}&user=${USER}&item=260&dimension=${DIMENSION}&limit=10&attributes=title,img_url,genre1&jsonpCallback=unused&algorithms=recommenders:RECENT_MATRIX_FACTOR"
+echo "$CMD"
+echo ""
+curl $CMD
+echo ""
+
+# topic model
+echo ""
+echo "running TOPIC_MODEL on user 48630 (sci-fi fan)"
+echo ""
+CMD="http://${HOST_IP}/js/recommendations?consumer_key=${JS_CONSUMER_KEY}&user=48630&item=260&dimension=${DIMENSION}&limit=10&attributes=title,img_url,genre1&jsonpCallback=unused&algorithms=recommenders:TOPIC_MODEL"
+echo "$CMD"
+echo ""
+curl $CMD
+echo ""
+
+# recent topic model
+echo ""
+echo "running RECENT_TOPIC_MODEL using last 2 actions"
+echo ""
+CMD="http://${HOST_IP}/js/recommendations?consumer_key=${JS_CONSUMER_KEY}&user=${USER}&item=16&dimension=${DIMENSION}&limit=10&attributes=title,img_url,genre1&jsonpCallback=unused&algorithms=recommenders:RECENT_TOPIC_MODEL%2Cnum_recent_actions:2"
+echo "$CMD"
+echo ""
+curl $CMD
+echo ""
+
+#call that uses TOPIC_MODEL then RECENT_TOPIC_MODEL
+echo ""
+echo "running TOPIC_MODEL then if no successful RECENT_TOPIC_MODEL using last 20 actions"
+echo "for user 16 - TOPIC_MODEL will succeed as they habe been processed in the batch Spark job for TOPIC_MODELs"
+echo ""
+CMD="http://${HOST_IP}/js/recommendations?consumer_key=${JS_CONSUMER_KEY}&user=48630&item=16&dimension=${DIMENSION}&limit=10&attributes=title,img_url,genre1&jsonpCallback=unused&algorithms=recommenders:TOPIC_MODEL|RECENT_TOPIC_MODEL%2Cnum_recent_actions:20"
+echo "$CMD"
+echo ""
+curl $CMD
+echo ""
+
+
+# word2vec based on recent items
+echo ""
+echo "running WORD2VEC on Star Wars (id=260) and Casino (id=16)"
+echo ""
+CMD="http://${HOST_IP}/js/recommendations?consumer_key=${JS_CONSUMER_KEY}&user=${USER}&item=260&dimension=${DIMENSION}&limit=10&attributes=title,img_url,genre1&jsonpCallback=unused&algorithms=recommenders:SEMANTIC_VECTORS%2Csv_prefix:word2vec"
+echo "$CMD"
+echo ""
+curl $CMD
+echo ""
+
+
+
+

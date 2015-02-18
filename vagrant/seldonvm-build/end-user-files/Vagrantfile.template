@@ -1,0 +1,31 @@
+# -*- mode: ruby -*-
+# vi: set ft=ruby :
+
+# Vagrantfile API/syntax version. Don't touch unless you know what you're doing!
+VAGRANTFILE_API_VERSION = "2"
+
+Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
+  config.vm.box = "%VMBOX_NAME%"
+  config.vm.box_url = "http://%VMBOX_S3_BUCKET%/%VMBOX_NAME%/%VMBOX_NAME%_vagrant.json"
+  #config.vm.network "private_network", ip: "172.17.8.151"
+  #config.vm.network "private_network", type: "dhcp"
+  #config.vm.network "bridged"
+  config.ssh.username = "core"
+  config.vm.network "forwarded_port", guest: 8080, host: 8080
+
+  config.vm.provider :virtualbox do |v|
+    # On VirtualBox, we don't have guest additions or a functional vboxsf
+    # in CoreOS, so tell Vagrant that so it can be smarter.
+    v.check_guest_additions = false
+    v.functional_vboxsf     = false
+  end
+
+  config.vm.provider "virtualbox" do |vb|
+    # Use VBoxManage to customize the VM. For example to change memory:
+    vb.customize ["modifyvm", :id, "--memory", "4000"]
+  end
+
+  # always use Vagrants insecure key
+  config.ssh.insert_key = false
+
+end

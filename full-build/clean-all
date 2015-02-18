@@ -1,0 +1,26 @@
+#!/bin/bash
+set -o nounset
+set -o errexit
+
+STARTUP_DIR="$( cd "$( dirname "$0" )" && pwd )"
+PROJ_DIR=${STARTUP_DIR}/..
+
+clean_images() {
+    cd ${PROJ_DIR}/images
+    ./clean-all-images
+}
+
+clean_imagetars() {
+    cd ${PROJ_DIR}/vagrant/seldonvm-build/save-and-load-images
+    make clean
+}
+
+clean_vmbox() {
+    cd ${PROJ_DIR}/vagrant/seldonvm-build
+    make clean
+}
+
+clean_images
+clean_imagetars
+clean_vmbox
+

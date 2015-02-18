@@ -1,0 +1,16 @@
+#!/bin/bash
+
+set -o nounset
+set -o errexit
+
+STARTUP_DIR="$( cd "$( dirname "$0" )" && pwd )"
+
+echo "--- starting kafka ---"
+docker run -d \
+	--name kafka_server_container \
+    --link zookeeper_server_container:zk \
+    --volumes-from api_server_data_logs_container \
+	-p 9092:9092 \
+	-v /var/run/docker.sock:/var/run/docker.sock \
+	${REGISTRY_PREFIX}kafka_image
+

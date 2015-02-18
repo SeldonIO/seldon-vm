@@ -1,0 +1,31 @@
+#!/bin/bash
+set -o nounset
+set -o errexit
+
+STARTUP_DIR="$( cd "$( dirname "$0" )" && pwd )"
+
+declare -a arr=( \
+    "api_server_image"
+    "api_server_demo_image"
+    "api_server_data_logs_image" \
+    "seldon-models" \
+    "kafka_image" \
+    "memcache_image" \
+    "mysql_image" \
+    "mysql_data" \
+    "spark_image" \
+    "td_agent_image" \
+    "zookeeper_image" \
+    "java7jre_image" \
+    "tomcat7_image" \
+    "consul_image" \
+    "semantic_vectors_image" \
+)
+
+## now loop through the above array
+for i in "${arr[@]}"
+do
+    cd "${STARTUP_DIR}/$i"
+    make push_to_registry
+done
+

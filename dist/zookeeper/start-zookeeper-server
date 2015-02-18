@@ -1,0 +1,19 @@
+#!/bin/bash
+
+set -o nounset
+set -o errexit
+
+STARTUP_DIR="$( cd "$( dirname "$0" )" && pwd )"
+
+echo "--- starting zookeeper ---"
+#docker run --name zookeeper_server_container -d -p 2181:2181 -p 2888:2888 -p 3888:3888 ${REGISTRY_PREFIX}zookeeper_image
+docker run --name zookeeper_server_container -d ${REGISTRY_PREFIX}zookeeper_image
+echo "waiting 2 secs"
+sleep 2
+echo "setup movielens zookeeper settings"
+cat ${STARTUP_DIR}/zoo-movielens.cfg | xargs  -I {} docker exec zookeeper_server_container bash -c "python /zookeeper/scripts/update_zk.py < <(echo {})"
+if [ -f ${STARTUP_DIR}/"zoo.cfg" ];
+then
+    echo "setup custom client zookeeper settings"
+    cat ${STARTUP_DIR}/zoo.cfg | xargs  -I {} docker exec zookeeper_server_container bash -c "python /zookeeper/scripts/update_zk.py < <(echo {})"
+fi

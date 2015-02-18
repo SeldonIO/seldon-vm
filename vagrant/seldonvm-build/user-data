@@ -1,0 +1,6 @@
+#cloud-config
+
+coreos:
+  update:
+    reboot-strategy: off
+

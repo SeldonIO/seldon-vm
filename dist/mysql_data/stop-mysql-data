@@ -1,0 +1,25 @@
+#!/bin/bash
+
+set -o nounset
+set -o errexit
+
+STARTUP_DIR="$( cd "$( dirname "$0" )" && pwd )"
+
+echo "--- stopping mysql data container---"
+
+DOCKER_CMD=docker
+CONTAINER_ID=mysql_data
+
+set +o errexit
+IS_RUNNING=$(${DOCKER_CMD} inspect -f {{.State.Running}} ${CONTAINER_ID} 2> /dev/null)
+set -o errexit
+
+if [ "${IS_RUNNING}" == "true" ]; then
+    docker stop ${CONTAINER_ID}
+fi
+
+EXITED_CONTAINER_ID=$(docker ps -a|grep ' Exited '|grep "${CONTAINER_ID}"|awk '{print $1}')
+if [ ! -z "$EXITED_CONTAINER_ID" ]; then
+    docker ps -a|grep ' Exited '|grep "${CONTAINER_ID}"|awk '{print $1}'|xargs docker rm
+fi
+

@@ -1,0 +1,38 @@
+#!/bin/bash
+set -o nounset
+set -o errexit
+
+STARTUP_DIR="$( cd "$( dirname "$0" )" && pwd )"
+PROJ_DIR=${STARTUP_DIR}/..
+
+build_images() {
+    cd ${PROJ_DIR}/images
+    ./build-all-images
+}
+
+build_imagetars() {
+    cd ${PROJ_DIR}/vagrant/seldonvm-build/save-and-load-images
+    make save_images
+}
+
+build_vmbox() {
+    cd ${PROJ_DIR}/vagrant/seldonvm-build
+    make build
+}
+
+show_build_time() {
+    BUILD_START_TIME=$1
+    BUILD_END_TIME=$2
+    echo "--- all builds finished ---"
+    echo "--- start: ${BUILD_START_TIME} ---"
+    echo "---   end: ${BUILD_END_TIME} ---"
+}
+
+BUILD_START_TIME=$(date)
+build_images
+build_imagetars
+build_vmbox
+BUILD_END_TIME=$(date)
+
+show_build_time "${BUILD_START_TIME}" "${BUILD_END_TIME}"
+

@@ -1,0 +1,19 @@
+#!/bin/bash
+
+set -o nounset
+set -o errexit
+
+STARTUP_DIR="$( cd "$( dirname "$0" )" && pwd )"
+
+echo "--- starting seldon models data container ---"
+
+if [[ $# > 0 ]]; then
+    LOCAL_MODELS_DIR=$1
+    ${STARTUP_DIR}/setup-local-models
+    docker run --name seldon-models -d -v ${LOCAL_MODELS_DIR}:/seldon-models ${REGISTRY_PREFIX}seldon-models
+else
+    docker run --name seldon-models -d ${REGISTRY_PREFIX}seldon-models
+fi
+
+
+

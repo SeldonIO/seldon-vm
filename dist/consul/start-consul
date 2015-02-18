@@ -1,0 +1,18 @@
+#!/bin/bash
+
+set -o nounset
+set -o errexit
+
+STARTUP_DIR="$( cd "$( dirname "$0" )" && pwd )"
+
+echo "--- starting consul ---"
+docker run --name="consul" -h node1 -d consul_image -server -bootstrap
+echo "waiting 4 secs"
+sleep 4
+${STARTUP_DIR}/setup-dbs.sh
+${STARTUP_DIR}/setup-spark.sh
+${STARTUP_DIR}/setup-alg-training.sh
+
+
+
+

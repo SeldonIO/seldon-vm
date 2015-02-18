@@ -1,0 +1,18 @@
+#!/bin/bash
+
+set -o nounset
+set -o errexit
+
+STARTUP_DIR="$( cd "$( dirname "$0" )" && pwd )"
+
+echo "--- starting data logs ---"
+
+if [[ $# > 0 ]]; then
+    LOCAL_LOGS_DIR=$1
+    docker run --name api_server_data_logs_container -d -v ${LOCAL_LOGS_DIR}:/data-logs ${REGISTRY_PREFIX}api_server_data_logs_image
+else
+    docker run --name api_server_data_logs_container -d ${REGISTRY_PREFIX}api_server_data_logs_image
+fi
+
+
+

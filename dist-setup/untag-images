@@ -1,0 +1,34 @@
+#!/bin/bash
+
+set -o nounset
+set -o errexit
+
+STARTUP_DIR="$( cd "$( dirname "$0" )" && pwd )"
+PROJ_DIR=..
+source ${PROJ_DIR}/build_settings
+
+declare -a arr=( \
+    "api_server_demo_image" \
+    "api_server_data_logs_image" \
+    "mysql_image" \
+    "mysql_data" \
+    "kafka_image" \
+    "memcache_image" \
+    "td_agent_image" \
+    "zookeeper_image" \
+    "spark_image" \
+    "seldon-models" \
+    "java7jre_image" \
+    "tomcat7_image" \
+    "consul_image" \
+)
+
+for i in "${arr[@]}"
+do
+    set +o errexit
+    docker tag --force=true ${PRIVATE_REGISTRY_HOST}:${PRIVATE_REGISTRY_PORT}/$i $i
+    docker rmi ${PRIVATE_REGISTRY_HOST}:${PRIVATE_REGISTRY_PORT}/$i
+    set -o errexit
+
+done
+

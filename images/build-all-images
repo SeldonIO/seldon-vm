@@ -1,0 +1,44 @@
+#!/bin/bash
+set -o nounset
+set -o errexit
+
+STARTUP_DIR="$( cd "$( dirname "$0" )" && pwd )"
+
+# excluding some images for now
+
+BUILD_START_TIME=$(date)
+
+declare -a arr=( \
+    "java7jre_image" \
+    "tomcat7_image" \
+    "zookeeper_image" \
+    "api_server_image" \
+    "api_server_demo_image" \
+    "api_server_data_logs_image" \
+    "seldon-models" \
+    "mysql_image" \
+    "mysql_data" \
+    "kafka_image" \
+    "memcache_image" \
+    "td_agent_image" \
+    "spark_image" \
+    "seldon-tools" \
+    "consul_image" \
+    "semantic_vectors_image" \
+    "movielens_data_transform" \
+)
+
+## now loop through the above array
+for i in "${arr[@]}"
+do
+    echo "--- building $i ---"
+    cd "${STARTUP_DIR}/$i"
+    make build_image SELDON_VERSION=0.2
+done
+
+BUILD_END_TIME=$(date)
+
+echo "--- build finished ---"
+echo "--- start: ${BUILD_START_TIME} ---"
+echo "---   end: ${BUILD_END_TIME} ---"
+

@@ -1,0 +1,16 @@
+{
+    "types": [{
+            "type_id": 1,
+            "type_name": "music",
+            "type_attrs": [
+                {"name":"title","value_type":"string"},
+                {"name":"artist","value_type":"string"},
+                {"name":"genre","value_type":["pop","rock","rap"]},
+                {"name":"price","value_type":"double"},
+                {"name":"is_compilation","value_type":"boolean"},
+                {"name":"sales_count", "value_type":"int"},
+                {"name":"tags","value_type":"text"}
+                ]
+            }
+            ]
+}

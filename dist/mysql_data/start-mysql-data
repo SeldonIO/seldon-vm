@@ -1,0 +1,18 @@
+#!/bin/bash
+
+set -o nounset
+set -o errexit
+
+STARTUP_DIR="$( cd "$( dirname "$0" )" && pwd )"
+
+echo "--- starting mysql ---"
+
+docker run \
+    --name mysql_data \
+    -d \
+    ${REGISTRY_PREFIX}mysql_data nginx -g 'daemon off;'
+
+WAIT_SECS=2
+echo waiting ${WAIT_SECS} secs...
+sleep ${WAIT_SECS}
+

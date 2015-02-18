@@ -1,0 +1,14 @@
+#!/bin/bash
+
+set -o nounset
+set -o errexit
+
+STARTUP_DIR="$( cd "$( dirname "$0" )" && pwd )"
+
+export USE_LOCAL_LOGS_DIR=true
+export USE_LOCAL_MYSQL_DATA_DIR=
+
+mkdir -p local-logs
+
+${STARTUP_DIR}/start-all
+

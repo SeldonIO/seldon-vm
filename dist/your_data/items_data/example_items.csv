@@ -1,0 +1,4 @@
+id,name,title,artist,genre,price,is_compilation,sales_count,tags
+1,"tune1","tune1","artist1","pop",10,0,1,"pop,fast,dance,female,american"
+2,"tune2","tune2","artist2","rock",20,1,20,"rock,country,american,male,guitar"
+3,"tune3","tune3","artist1","rock",10,1,30,"rock,heavy metal,sad,male"

@@ -1,0 +1,22 @@
+#!/bin/bash
+
+set -o nounset
+set -o errexit
+
+STARTUP_DIR="$( cd "$( dirname "$0" )" && pwd )"
+
+cd ${STARTUP_DIR}
+echo -n 'adding movielens and test dbs ...'
+./mysql-shell movielens_sql/api-schema.sql
+./mysql-shell movielens_sql/api-data.sql
+
+./mysql-shell movielens_sql/testclient-schema.sql
+
+./mysql-shell movielens_sql/test1-schema.sql
+./mysql-shell movielens_sql/test2-schema.sql
+./mysql-shell movielens_sql/test3-schema.sql
+./mysql-shell movielens_sql/test4-schema.sql
+./mysql-shell movielens_sql/test5-schema.sql
+
+./mysql-shell movielens_sql/movielens-schema.sql
+echo  ' done'

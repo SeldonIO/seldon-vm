@@ -1,0 +1,10 @@
+#!/bin/bash
+
+set -o nounset
+set -o errexit
+
+STARTUP_DIR="$( cd "$( dirname "$0" )" && pwd )"
+
+echo "--- starting memcache ---"
+docker run --name memcache_server_container -d ${REGISTRY_PREFIX}memcache_image
+

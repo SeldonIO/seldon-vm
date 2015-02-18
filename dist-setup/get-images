@@ -1,0 +1,27 @@
+#!/bin/bash
+
+set -o nounset
+set -o errexit
+
+STARTUP_DIR="$( cd "$( dirname "$0" )" && pwd )"
+PROJ_DIR=..
+source ${PROJ_DIR}/build_settings
+
+${STARTUP_DIR}/registry-login
+
+docker pull ${PRIVATE_REGISTRY_HOST}:${PRIVATE_REGISTRY_PORT}/java7jre_image
+docker pull ${PRIVATE_REGISTRY_HOST}:${PRIVATE_REGISTRY_PORT}/tomcat7_image
+docker pull ${PRIVATE_REGISTRY_HOST}:${PRIVATE_REGISTRY_PORT}/zookeeper_image
+docker pull ${PRIVATE_REGISTRY_HOST}:${PRIVATE_REGISTRY_PORT}/memcache_image
+docker pull ${PRIVATE_REGISTRY_HOST}:${PRIVATE_REGISTRY_PORT}/mysql_image
+docker pull ${PRIVATE_REGISTRY_HOST}:${PRIVATE_REGISTRY_PORT}/mysql_data
+docker pull ${PRIVATE_REGISTRY_HOST}:${PRIVATE_REGISTRY_PORT}/api_server_demo_image
+docker pull ${PRIVATE_REGISTRY_HOST}:${PRIVATE_REGISTRY_PORT}/api_server_data_logs_image
+docker pull ${PRIVATE_REGISTRY_HOST}:${PRIVATE_REGISTRY_PORT}/seldon-models
+docker pull ${PRIVATE_REGISTRY_HOST}:${PRIVATE_REGISTRY_PORT}/td_agent_image
+docker pull ${PRIVATE_REGISTRY_HOST}:${PRIVATE_REGISTRY_PORT}/kafka_image
+docker pull ${PRIVATE_REGISTRY_HOST}:${PRIVATE_REGISTRY_PORT}/spark_image
+docker pull ${PRIVATE_REGISTRY_HOST}:${PRIVATE_REGISTRY_PORT}/consul_image
+
+rm -fv ~/.dockercfg
+

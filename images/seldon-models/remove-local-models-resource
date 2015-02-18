@@ -1,0 +1,16 @@
+#!/bin/bash
+
+set -o nounset
+set -o errexit
+
+STARTUP_DIR="$( cd "$( dirname "$0" )" && pwd )"
+PROJ_DIR=${STARTUP_DIR}/../..
+
+FILENAME=movielens_demo
+TAR_FILE="${FILENAME}.tar"
+GZ_FILE=${TAR_FILE}.gz
+RESOURCES_DIR=${PROJ_DIR}/dist/resources
+
+rm -rfv ${PROJ_DIR}/dist/local-models
+rm -fv ${RESOURCES_DIR}/${GZ_FILE}
+

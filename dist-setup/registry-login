@@ -1,0 +1,11 @@
+#!/bin/bash
+
+set -o nounset
+set -o errexit
+
+STARTUP_DIR="$( cd "$( dirname "$0" )" && pwd )"
+PROJ_DIR=..
+source ${PROJ_DIR}/build_settings
+
+docker login -u ${PRIVATE_REGISTRY_USER} -p ${PRIVATE_REGISTRY_PASSWORD} -e "${PRIVATE_REGISTRY_EMAIL}" https://${PRIVATE_REGISTRY_HOST}:${PRIVATE_REGISTRY_PORT}
+

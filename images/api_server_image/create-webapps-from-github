@@ -1,0 +1,40 @@
+#! /bin/bash
+set -o nounset
+set -o errexit
+
+STARTUP_DIR="$( cd "$( dirname "$0" )" && pwd )"
+
+if [[ $# < 1 ]]; then
+  echo "Needs API version"
+  exit 1
+fi
+VERSION=$1
+cd ${STARTUP_DIR}
+rm -rf seldon-server* seldon-server*.war
+echo 'cloning seldon-server project from github'
+git clone -q  https://github.com/SeldonIO/seldon-server.git
+cd ${STARTUP_DIR}/seldon-server
+git checkout ${VERSION} &> /dev/null
+echo 'cloning configuration project from github'
+cd ${STARTUP_DIR}
+git clone -q https://github.com/SeldonIO/seldon-server-config-vm.git
+cd  ${STARTUP_DIR}/seldon-server-config-vm
+git checkout ${VERSION} &> /dev/null
+echo 'building seldon-server-config-vm project'
+mvn install -q
+cd ${STARTUP_DIR}/seldon-server
+echo 'building seldon-server project'
+mvn package -DskipTests -q -Dconfig.version=vm  
+cp target/seldon-server*.war ../
+cd ${STARTUP_DIR}
+
+WAR_FILE=`ls seldon-server*.war`
+rm -rf ./webapps
+
+mkdir -p ./webapps/ROOT
+
+unzip -qx -d ./webapps/ROOT/ ${WAR_FILE} &> /dev/null
+
+# clear up
+rm -rf seldon-server* seldon-server*.war
+echo 'done'

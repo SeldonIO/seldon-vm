@@ -1,0 +1,34 @@
+#!/bin/bash
+
+set -o nounset
+set -o errexit
+
+STARTUP_DIR="$( cd "$( dirname "$0" )" && pwd )"
+
+if [[ $# < 1 ]]; then
+	echo "Need full path to warfile"
+	exit 1
+fi
+
+WAR_FILE_FPATH=$1
+
+cd ${STARTUP_DIR}
+
+echo $WAR_FILE_FPATH
+
+WAR_FILE=$(basename "${WAR_FILE_FPATH}")
+
+API_SERVER_VERSION=$(echo "${WAR_FILE}"|sed -e 's/api-server-//' -e 's/.war$//')
+echo "--- API_SERVER_VERSION[${API_SERVER_VERSION}] ---"
+echo "${API_SERVER_VERSION}" > __API_SERVER_VERSION__
+
+if [ ! -f "./${WAR_FILE}" ]; then
+    cp "${WAR_FILE_FPATH}" .
+fi
+
+rm -rfv ./webapps
+
+mkdir -p ./webapps/ROOT
+
+unzip -x -d ./webapps/ROOT/ ${WAR_FILE}
+

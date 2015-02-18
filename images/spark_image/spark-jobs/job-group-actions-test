@@ -1,0 +1,30 @@
+#!/bin/bash
+
+set -o nounset
+set -o errexit
+
+STARTUP_DIR="$( cd "$( dirname "$0" )" && pwd )"
+
+cd /opt/spark
+
+DATE_YESTERDAY=$(perl -e 'use POSIX;print strftime "%Y%m%d",localtime time-86400;')
+DATE_OTHER=20141217
+DATE_TODAY=$(perl -e 'use POSIX;print strftime "%Y%m%d",localtime time;')
+
+INPUT_DATE_STRING=${DATE_TODAY}
+
+JAR_FILE=`ls /app`
+JAR_FILE=`basename ${JAR_FILE}`
+echo "jar = ${JAR_FILE}"
+
+./bin/spark-submit \
+    --class "io.seldon.spark.actions.GroupActionsJob" \
+    --master local[1] \
+    /app/${JAR_FILE} \
+        --aws-access-key-id "" \
+        --aws-secret-access-key "" \
+        --input-path-pattern "/data-logs/fluentd/actions.%y/%m%d/*/*" \
+        --input-date-string "${INPUT_DATE_STRING}" \
+        --output-path-dir "/data-logs/seldon-data-test" \
+        --gzip-output
+

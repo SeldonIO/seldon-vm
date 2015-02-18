@@ -1,0 +1,112 @@
+#!/bin/bash
+
+set -o nounset
+set -o errexit
+
+STARTUP_DIR="$( cd "$( dirname "$0" )" && pwd )"
+
+HOST_IP=localhost:8080
+if [[ $(uname) == "Darwin" ]]; then
+    BOOT2DOCKER_HOST_IP=$(boot2docker ip 2> /dev/null)
+    HOST_IP=${BOOT2DOCKER_HOST_IP}:8080
+fi
+
+echo "############################"
+echo "General recommendation calls"
+echo "############################"
+
+#call that uses TOPIC_MODEL then RECENT_TOPIC_MODEL
+echo ""
+echo "running TOPIC_MODEL then if noT successful RECENT_TOPIC_MODEL using last 20 actions"
+echo "for user 16 - TOPIC_MODEL will succeed as they habe been processed in the batch Spark job for TOPIC_MODELs"
+echo "for another user it will use their recent history and RECENT_TOPIC_MODEL will succeed if the tags have been modeled"
+echo ""
+CMD="http://${HOST_IP}/js/recommendations?consumer_key=uggyecofcz&user=48630&item=16&dimension=4&limit=10&attributes=title,img_url,genre1&jsonpCallback=unused&algorithms=recommenders:TOPIC_MODEL|RECENT_TOPIC_MODEL%2Cnum_recent_actions:20"
+echo "$CMD"
+echo ""
+curl $CMD
+echo ""
+
+#call that uses MATRIX_FACTOR then RECENT_MATRIX_FACTOR
+echo ""
+echo "running MATRIX_FACTOR then if noT successful RECENT_MATRIX_FACTOR using last 20 actions"
+echo ""
+CMD="http://${HOST_IP}/js/recommendations?consumer_key=uggyecofcz&user=48630&item=16&dimension=4&limit=10&attributes=title,img_url,genre1&jsonpCallback=unused&algorithms=recommenders:MATRIX_FACTOR|RECENT_MATRIX_FACTOR%2Cnum_recent_actions:20"
+echo "$CMD"
+echo ""
+curl $CMD
+echo ""
+
+#call that uses SEMANTIC_VECTORS
+echo ""
+echo "running SEMANTIC_VECTORS using last 20 actions"
+echo ""
+CMD="http://${HOST_IP}/js/recommendations?consumer_key=uggyecofcz&user=48630&item=16&dimension=4&limit=10&attributes=title,img_url,genre1&jsonpCallback=unused&algorithms=recommenders:SEMANTIC_VECTORS%2Cnum_recent_actions:20"
+echo "$CMD"
+echo ""
+curl $CMD
+echo ""
+
+
+#call that uses RECENT_SIMILAR_ITEMS
+echo ""
+echo "running RECENT_SIMILAR_ITEMS using last 20 actions"
+echo ""
+CMD="http://${HOST_IP}/js/recommendations?consumer_key=uggyecofcz&user=48630&item=16&dimension=4&limit=10&attributes=title,img_url,genre1&jsonpCallback=unused&algorithms=recommenders:RECENT_SIMILAR_ITEMS%2Cnum_recent_actions:20"
+echo "$CMD"
+echo ""
+curl $CMD
+echo ""
+
+
+echo "############################"
+echo "Get movies similar to a particular movie using each algorithm"
+echo "############################"
+
+
+#call that uses RECENT_TOPIC_MODEL
+echo ""
+echo "running RECENT_TOPIC_MODEL"
+echo ""
+CMD="http://${HOST_IP}/js/recommendations?consumer_key=uggyecofcz&user=random1&item=16&dimension=4&limit=10&attributes=title,img_url,genre1&jsonpCallback=unused&algorithms=recommenders:RECENT_TOPIC_MODEL%2Cnum_recent_actions:1"
+echo "$CMD"
+echo ""
+curl $CMD
+echo ""
+
+#call that uses RECENT_MATRIX_FACTOR
+echo ""
+echo "running RECENT_MATRIX_FACTOR"
+echo ""
+CMD="http://${HOST_IP}/js/recommendations?consumer_key=uggyecofcz&user=random2&item=16&dimension=4&limit=10&attributes=title,img_url,genre1&jsonpCallback=unused&algorithms=recommenders:RECENT_MATRIX_FACTOR%2Cnum_recent_actions:1"
+echo "$CMD"
+echo ""
+curl $CMD
+echo ""
+
+#call that uses SEMANTIC_VECTORS
+echo ""
+echo "running SEMANTIC_VECTORS"
+echo ""
+CMD="http://${HOST_IP}/js/recommendations?consumer_key=uggyecofcz&user=random3&item=16&dimension=4&limit=10&attributes=title,img_url,genre1&jsonpCallback=unused&algorithms=recommenders:SEMANTIC_VECTORS%2Cnum_recent_actions:1"
+echo "$CMD"
+echo ""
+curl $CMD
+echo ""
+
+
+#call that uses RECENT_SIMILAR_ITEMS
+echo ""
+echo "running RECENT_SIMILAR_ITEMS"
+echo ""
+CMD="http://${HOST_IP}/js/recommendations?consumer_key=uggyecofcz&user=random4&item=16&dimension=4&limit=10&attributes=title,img_url,genre1&jsonpCallback=unused&algorithms=recommenders:RECENT_SIMILAR_ITEMS%2Cnum_recent_actions:1"
+echo "$CMD"
+echo ""
+curl $CMD
+echo ""
+
+
+
+
+
+

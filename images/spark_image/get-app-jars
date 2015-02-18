@@ -1,0 +1,23 @@
+#!/bin/bash
+
+set -o nounset
+set -o errexit
+
+STARTUP_DIR="$( cd "$( dirname "$0" )" && pwd )"
+
+if [[ $# < 1 ]]; then
+        echo "Need version"
+        exit 1
+fi
+
+VERSION=$1
+
+
+cd ${STARTUP_DIR}
+rm -rfv ./app
+
+FPATH="s3://seldon-vm/${VERSION}/images/spark_image/app.tar.gz"
+echo "--- fetching ${FPATH} ---"
+aws s3 cp ${FPATH} .
+tar xvf app.tar.gz
+

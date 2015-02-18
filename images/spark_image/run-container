@@ -1,0 +1,9 @@
+#!/bin/bash
+
+set -o nounset
+set -o errexit
+
+STARTUP_DIR="$( cd "$( dirname "$0" )" && pwd )"
+
+docker run --rm -i -t --name="spark_container" spark_image bash
+

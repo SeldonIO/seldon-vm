@@ -1,0 +1,24 @@
+#!/bin/bash
+
+set -o nounset
+set -o errexit
+
+STARTUP_DIR="$( cd "$( dirname "$0" )" && pwd )"
+
+JAR_FILE=`ls /app`
+JAR_FILE=`basename ${JAR_FILE}`
+echo "jar = ${JAR_FILE}"
+
+cd /opt/spark
+
+./bin/spark-submit \
+    --class io.seldon.spark.streaming.MostPopularJob \
+    --master local[1] \
+    /app/${JAR_FILE} \
+    --zk-quorum zookeeper_server \
+    --kafka-group-id spark-streaming-group \
+    --kafka-topics actionstopic \
+    --kafka-thread-partitions 1 \
+    --jdbc 'jdbc:mysql://mysql_server:3306/?user=root&password=mypass' \
+    --clients movielens,test1,test2,test3,test4,test5
+

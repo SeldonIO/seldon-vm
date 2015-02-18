@@ -1,0 +1,21 @@
+#!/bin/bash
+
+set -o nounset
+set -o errexit
+
+STARTUP_DIR="$( cd "$( dirname "$0" )" && pwd )"
+
+echo "--- starting api-server ---"
+
+export EMBEDLY_KEY=${EMBEDLY_KEY:-}
+
+docker run -d \
+    --name api_server_container -p 8080:8080 \
+    --link mysql_server_container:mysql_server \
+    --link zookeeper_server_container:zookeeper_server \
+    --link memcache_server_container:memcache_server \
+    --volumes-from api_server_data_logs_container \
+    --volumes-from seldon-models \
+    -e EMBEDLY_KEY=$EMBEDLY_KEY \
+    ${REGISTRY_PREFIX}api_server_demo_image bash -c '/apps/api-server/startup.sh'
+

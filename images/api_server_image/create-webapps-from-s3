@@ -1,0 +1,36 @@
+#!/bin/bash
+
+set -o nounset
+set -o errexit
+
+STARTUP_DIR="$( cd "$( dirname "$0" )" && pwd )"
+
+if [[ $# < 1 ]]; then
+        echo "Need version"
+        exit 1
+fi
+
+VERSION=$1
+
+API_SERVER_VERSION=$(cat __API_SERVER_VERSION__)
+echo "--- API_SERVER_VERSION[${API_SERVER_VERSION}] ---"
+
+WAR_FILE_FPATH=s3://seldon-vm/${VERSION}/images/api_server_image/api-server-${API_SERVER_VERSION}.war
+
+cd ${STARTUP_DIR}
+
+echo $WAR_FILE_FPATH
+
+WAR_FILE=$(basename "${WAR_FILE_FPATH}")
+
+if [ ! -f "./${WAR_FILE}" ]; then
+    echo "--- fetching ${WAR_FILE_FPATH} ---"
+    aws s3 cp $WAR_FILE_FPATH .
+fi
+
+rm -rfv ./webapps
+
+mkdir -p ./webapps/ROOT
+
+unzip -x -d ./webapps/ROOT/ ${WAR_FILE}
+

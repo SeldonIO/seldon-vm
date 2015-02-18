@@ -1,0 +1,8 @@
+#!/bin/bash
+
+set -o nounset
+set -o errexit
+
+STARTUP_DIR="$( cd "$( dirname "$0" )" && pwd )"
+
+docker run --name="testing_semvec" --rm --volumes-from seldon-models --link mysql_server_container:mysql_server --link consul:consul ${REGISTRY_PREFIX}semvec_training bash -c "/scripts/run-training.sh movielens 30000 description /seldon-models"

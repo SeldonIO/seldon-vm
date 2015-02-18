@@ -1,0 +1,33 @@
+#!/bin/bash
+
+set -o nounset
+set -o errexit
+
+STARTUP_DIR="$( cd "$( dirname "$0" )" && pwd )"
+DIST_DIR=${STARTUP_DIR}/..
+
+echo "--- starting mysql ---"
+
+OPT_VOLUMES_FROM=
+OPT_V=
+
+if [[ ! ${USE_LOCAL_MYSQL_DATA_DIR} == "true" ]];then
+    OPT_VOLUMES_FROM="--volumes-from mysql_data"
+else
+    ${STARTUP_DIR}/setup_local_mysql_data
+    OPT_V="-v ${DIST_DIR}/local_mysql_data:/mysql_data"
+fi
+
+docker run \
+    --name mysql_server_container \
+    ${OPT_VOLUMES_FROM} \
+    --volumes-from seldon-models \
+    ${OPT_V} \
+    -e MYSQL_ROOT_PASSWORD=mypass \
+    -d \
+    ${REGISTRY_PREFIX}mysql_image 
+
+WAIT_SECS=12
+echo waiting ${WAIT_SECS} secs...
+sleep ${WAIT_SECS}
+

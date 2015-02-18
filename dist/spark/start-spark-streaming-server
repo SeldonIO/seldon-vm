@@ -1,0 +1,15 @@
+#!/bin/bash
+
+set -o nounset
+set -o errexit
+
+STARTUP_DIR="$( cd "$( dirname "$0" )" && pwd )"
+PROJDIR=${STARTUP_DIR}/../..
+
+echo "--- starting spark streaming ---"
+docker run -d \
+    --name spark_streaming_server_container \
+    --link mysql_server_container:mysql_server \
+    --link zookeeper_server_container:zookeeper_server \
+    ${REGISTRY_PREFIX}spark_image /bin/bash -c '/startup-scripts/run-streaming-job'
+

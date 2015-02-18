@@ -1,0 +1,30 @@
+#!/bin/bash
+
+set -o nounset
+set -o errexit
+
+STARTUP_DIR="$( cd "$( dirname "$0" )" && pwd )"
+
+if [[ $# < 1 ]]; then
+	echo "Need full path to dir containing jars"
+	exit 1
+fi
+
+JARS_DIR_FPATH=$1
+
+cd ${STARTUP_DIR}
+
+echo $JARS_DIR_FPATH
+
+rm -rfv ./app
+
+mkdir -p ./app
+
+cd ${STARTUP_DIR}/app
+
+cp -v "${JARS_DIR_FPATH}/spark-streaming-assembly-1.0.jar" .
+cp -v "${JARS_DIR_FPATH}/sparkjobgroupactions-1.0.0-jar-with-dependencies.jar" .
+#cp -v "${JARS_DIR_FPATH}/SeldonMF-assembly-1.0.jar" .
+#cp -v "${JARS_DIR_FPATH}/spark-0.0.1-SNAPSHOT-jar-with-dependencies.jar" .
+#cp -v "${JARS_DIR_FPATH}/spark-1.0-jar-with-dependencies.jar" .
+

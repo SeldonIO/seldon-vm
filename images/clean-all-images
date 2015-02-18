@@ -1,0 +1,25 @@
+#!/bin/bash
+set -o nounset
+set -o errexit
+
+STARTUP_DIR="$( cd "$( dirname "$0" )" && pwd )"
+
+declare -a arr=( \
+    "mysql_image" \
+    "mysql_data" \
+    "spark_image" \
+    "api_server_image" \
+    "seldon-models" \
+    "api_server_demo_image" \
+    "semantic_vectors_image" \
+    "movielens_data_transform" \
+)
+
+## now loop through the above array
+for i in "${arr[@]}"
+do
+    echo "--- cleaning $i ---"
+    cd "${STARTUP_DIR}/$i"
+    make clean
+done
+
