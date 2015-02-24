@@ -25,7 +25,8 @@ docker run \
     ${OPT_V} \
     -e MYSQL_ROOT_PASSWORD=mypass \
     -d \
-    ${REGISTRY_PREFIX}mysql_image 
+    --entrypoint="/bin/sh" \
+    ${REGISTRY_PREFIX}mysql_image -c 'mysqld --user=root --datadir=/mysql_data'
 
 WAIT_SECS=12
 echo waiting ${WAIT_SECS} secs...
