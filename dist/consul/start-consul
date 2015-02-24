@@ -7,12 +7,37 @@ STARTUP_DIR="$( cd "$( dirname "$0" )" && pwd )"
 
 echo "--- starting consul ---"
 docker run --name="consul" -h node1 -d consul_image -server -bootstrap
-echo "waiting 4 secs"
-sleep 4
-${STARTUP_DIR}/setup-dbs.sh
-${STARTUP_DIR}/setup-spark.sh
-${STARTUP_DIR}/setup-alg-training.sh
 
+COUNT=0
+MAX_COUNT=10
 
+IS_CONSUL_READY=false
 
+while true; do
+    COUNT=$((COUNT+1))
+    if [ $COUNT -gt $MAX_COUNT ]; then
+        break
+    fi
+
+    LEADER_STATUS=$(docker exec -i -t consul curl -s 'http://localhost:8500/v1/status/leader'|sed -e 's/"//g')
+    LEADER_STATUS_STRING_LENGTH=${#LEADER_STATUS}
+    if [ $LEADER_STATUS_STRING_LENGTH -gt 0 ]; then
+        IS_CONSUL_READY=true
+        break
+    fi
+
+    WAIT_SECS=3
+    echo "Consul not ready, sleeping ${WAIT_SECS} secs..."
+    sleep $WAIT_SECS
+done
+
+if [ "$IS_CONSUL_READY" = "true" ];then
+    echo "Consul now ready."
+    ${STARTUP_DIR}/setup-dbs.sh
+    ${STARTUP_DIR}/setup-spark.sh
+    ${STARTUP_DIR}/setup-alg-training.sh
+else
+    echo "Consul not ready!"
+    exit 1
+fi
 
