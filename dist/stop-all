@@ -10,7 +10,7 @@ ${STARTUP_DIR}/spark/stop-spark-offline-server
 ${STARTUP_DIR}/spark/stop-spark-streaming-server
 ${STARTUP_DIR}/td-agent/stop-td-agent-server
 ${STARTUP_DIR}/mysql/stop-mysql-server
-${STARTUP_DIR}/kafka/stop-kafka-server
+#${STARTUP_DIR}/kafka/stop-kafka-server
 ${STARTUP_DIR}/consul/stop-consul
 ${STARTUP_DIR}/zookeeper/stop-zookeeper-server
 ${STARTUP_DIR}/memcache/stop-memcache-server

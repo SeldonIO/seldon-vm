@@ -3,7 +3,6 @@ declare -a IMAGES_LIST=(
     "api_server_data_logs_image" \
     "mysql_image" \
     "mysql_data" \
-    "kafka_image" \
     "memcache_image" \
     "td_agent_image" \
     "zookeeper_image" \

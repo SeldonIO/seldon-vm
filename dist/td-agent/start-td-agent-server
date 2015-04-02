@@ -10,7 +10,6 @@ echo "--- starting td-agent ---"
 docker run \
     --name="td_agent_server_container" \
     --volumes-from api_server_data_logs_container \
-    --link kafka_server_container:kafka \
     -d \
     ${REGISTRY_PREFIX}td_agent_image
 

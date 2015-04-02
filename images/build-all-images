@@ -18,7 +18,6 @@ declare -a arr=( \
     "seldon-models" \
     "mysql_image" \
     "mysql_data" \
-    "kafka_image" \
     "memcache_image" \
     "td_agent_image" \
     "spark_image" \
