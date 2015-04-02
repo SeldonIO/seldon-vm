@@ -8,7 +8,7 @@ RUN ( [ -e /usr/lib/apt/methods/https ] || { apt-get update && apt-get install -
     apt-get install -y wget && \
     apt-get clean -y && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*)
 
-RUN (   wget -q http://mirror.gopotato.co.uk/apache/kafka/0.8.1.1/kafka_2.8.0-0.8.1.1.tgz -O /tmp/kafka_2.8.0-0.8.1.1.tgz && \
+RUN (   wget -q http://mirror.vorboss.net/apache/kafka/0.8.1.1/kafka_2.8.0-0.8.1.1.tgz -O /tmp/kafka_2.8.0-0.8.1.1.tgz && \
         tar xfz /tmp/kafka_2.8.0-0.8.1.1.tgz -C /opt && \
         rm -fv /tmp/kafka_2.8.0-0.8.1.1.tgz)
 
