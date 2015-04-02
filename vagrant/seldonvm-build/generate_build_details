@@ -13,7 +13,7 @@ build_details() {
     TIMESTAMP=`date +"%Y%m%d_%H%M%S"`
     echo "name[$VMBOX_NAME]"
     echo "version[$VMBOX_VERSION]"
-    echo "changeset[`hg id`]"
+    echo "revision[`git rev-parse HEAD`]"
     echo "build[$TIMESTAMP]"
 }
 
