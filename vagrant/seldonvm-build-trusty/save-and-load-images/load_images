@@ -1,0 +1,22 @@
+#!/bin/bash
+set -o nounset
+set -o errexit
+
+STARTUP_DIR="$( cd "$( dirname "$0" )" && pwd )"
+
+IMAGES_DIR=${STARTUP_DIR}/images
+
+source ${STARTUP_DIR}/images_list.sh
+
+# load dist dir archive
+DIST_GZ="${IMAGES_DIR}/dist.tar.gz"
+mkdir -p ~/seldon
+tar -zxvf ${DIST_GZ} -C ~/seldon
+
+for i in "${IMAGES_LIST[@]}"
+do
+    FPATH="${IMAGES_DIR}/$i.tar"
+    echo "loading $FPATH"
+    docker load --input="$FPATH"
+done
+

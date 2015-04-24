@@ -1,0 +1,11 @@
+#!/bin/bash
+
+set -o nounset
+set -o errexit
+
+STARTUP_DIR="$( cd "$( dirname "$0" )" && pwd )"
+
+echo "--- Updating VM ---"
+vagrant ssh -c 'mkdir -p ~/seldon; cd seldon; echo "greetings from Seldon!" > seldon.txt'
+vagrant ssh -c 'cp ~/share/build-details.txt ~/seldon/'
+

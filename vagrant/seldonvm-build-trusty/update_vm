@@ -1,0 +1,12 @@
+#!/bin/bash
+
+set -o nounset
+set -o errexit
+
+STARTUP_DIR="$( cd "$( dirname "$0" )" && pwd )"
+
+echo "--- Updating VM ---"
+
+vagrant ssh -c '/vagrant/save-and-load-images/load_images'
+vagrant ssh -c 'cp /vagrant/build-details.txt ~/seldon/'
+
