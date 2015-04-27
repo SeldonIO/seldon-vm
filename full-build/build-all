@@ -11,12 +11,12 @@ build_images() {
 }
 
 build_imagetars() {
-    cd ${PROJ_DIR}/vagrant/seldonvm-build/save-and-load-images
+    cd ${PROJ_DIR}/vagrant/seldonvm-build-trusty/save-and-load-images
     make save_images
 }
 
 build_vmbox() {
-    cd ${PROJ_DIR}/vagrant/seldonvm-build
+    cd ${PROJ_DIR}/vagrant/seldonvm-build-trusty
     make build
 }
 
