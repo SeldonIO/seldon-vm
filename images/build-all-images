@@ -3,12 +3,20 @@ set -o nounset
 set -o errexit
 
 STARTUP_DIR="$( cd "$( dirname "$0" )" && pwd )"
-
-# excluding some images for now
+PROJ_DIR=${STARTUP_DIR}/..
+source ${PROJ_DIR}/build_settings
 
 BUILD_START_TIME=$(date)
 
-declare -a arr=( \
+build_images() {
+    for i in "${IMAGES_LIST[@]}"; do
+        echo "--- building $i ---"
+        cd "${STARTUP_DIR}/$i"
+        make build_image SELDON_VERSION=0.2
+    done
+}
+
+declare -a IMAGES_LIST=( \
     "java7jre_image" \
     "tomcat7_image" \
     "zookeeper_image" \
@@ -27,13 +35,17 @@ declare -a arr=( \
     "movielens_data_transform" \
 )
 
-## now loop through the above array
-for i in "${arr[@]}"
-do
-    echo "--- building $i ---"
-    cd "${STARTUP_DIR}/$i"
-    make build_image SELDON_VERSION=0.2
-done
+BUILD_EXCLUDED_IMAGES=${BUILD_EXCLUDED_IMAGES:-}
+if [ ! -z ${BUILD_EXCLUDED_IMAGES} ]; then
+    for i in "${BUILD_EXCLUDED_IMAGES[@]}"; do
+        echo "Removing [${i}] from build"
+        IMAGES_LIST=( ${IMAGES_LIST[@]/$i} )
+    done
+fi
+
+if [ "${#IMAGES_LIST[@]}" -gt 0 ];then
+    build_images
+fi
 
 BUILD_END_TIME=$(date)
 
