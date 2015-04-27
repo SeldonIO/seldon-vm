@@ -1,5 +1,9 @@
 SELDON_VERSION=0.2
-VERSION=1.0.1
+##VERSION=1.0.1
+VERSION=0.91
+
+#GET_TAGGED_VERSION=git checkout tags/v$(VERSION);
+GET_TAGGED_VERSION=
 
 IMAGE_NAME=spark_image
 PROJ_DIR=../..
@@ -8,16 +12,16 @@ PROJ_DIR=../..
 dummy:
 	@echo dummy
 
-seldon-spark:
-	git clone https://github.com/SeldonIO/seldon-spark
+seldon-server:
+	git clone https://github.com/SeldonIO/seldon-server
 
 
-seldon-spark/target/seldon-spark-${VERSION}-jar-with-dependencies.jar:seldon-spark
-	cd seldon-spark ; git checkout tags/v${VERSION} ; mvn -DskipTests=true clean package ; cd ..
+seldon-server/offline-jobs/spark/target/seldon-spark-${VERSION}-jar-with-dependencies.jar:seldon-server
+	cd seldon-server/offline-jobs/spark; $(GET_TAGGED_VERSION) mvn -DskipTests=true clean package
 
-app/seldon-spark-${VERSION}-jar-with-dependencies.jar:seldon-spark/target/seldon-spark-${VERSION}-jar-with-dependencies.jar
+app/seldon-spark-${VERSION}-jar-with-dependencies.jar:seldon-server/offline-jobs/spark/target/seldon-spark-${VERSION}-jar-with-dependencies.jar
 	mkdir -p app
-	cp seldon-spark/target/seldon-spark-${VERSION}-jar-with-dependencies.jar app
+	cp seldon-server/offline-jobs/spark/target/seldon-spark-${VERSION}-jar-with-dependencies.jar app
 
 build_image: app/seldon-spark-${VERSION}-jar-with-dependencies.jar
 	docker build --force-rm=true -t spark_image .
@@ -30,7 +34,7 @@ push_to_registry:
 
 clean:
 	@rm -rfv ./app
-	@rm -rf seldon-spark
+	@rm -rf seldon-server
 
 
 #
