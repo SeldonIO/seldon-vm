@@ -22,6 +22,7 @@ build_image: webapps
 clean:
 	@rm -rfv ./webapps
 	@rm -rfv ./*.war
+	@rm -rfv ./seldon-server
 
 push_to_registry:
 	docker login -u $(PRIVATE_REGISTRY_USER) -p $(PRIVATE_REGISTRY_PASSWORD) -e "$(PRIVATE_REGISTRY_EMAIL)" https://$(PRIVATE_REGISTRY_HOST):$(PRIVATE_REGISTRY_PORT) && \

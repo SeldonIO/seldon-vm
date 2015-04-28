@@ -4,6 +4,8 @@ set -o errexit
 
 STARTUP_DIR="$( cd "$( dirname "$0" )" && pwd )"
 
+CLONE_SELDON_SERVER="git clone -q  https://github.com/SeldonIO/seldon-server.git"
+
 if [[ $# < 1 ]]; then
   echo "Needs API version"
   exit 1
@@ -12,20 +14,13 @@ VERSION=$1
 cd ${STARTUP_DIR}
 rm -rf seldon-server* seldon-server*.war
 echo 'cloning seldon-server project from github'
-git clone -q  https://github.com/SeldonIO/seldon-server.git
+$CLONE_SELDON_SERVER
 cd ${STARTUP_DIR}/seldon-server
-git checkout ${VERSION} &> /dev/null
-echo 'cloning configuration project from github'
-cd ${STARTUP_DIR}
-git clone -q https://github.com/SeldonIO/seldon-server-config-vm.git
-cd  ${STARTUP_DIR}/seldon-server-config-vm
-git checkout ${VERSION} &> /dev/null
-echo 'building seldon-server-config-vm project'
-mvn install -q
-cd ${STARTUP_DIR}/seldon-server
+##git checkout ${VERSION} &> /dev/null
+cd ${STARTUP_DIR}/seldon-server/server
 echo 'building seldon-server project'
-mvn package -DskipTests -q -Dconfig.version=vm  
-cp target/seldon-server*.war ../
+mvn package -DskipTests -q
+cp target/seldon-server*.war ${STARTUP_DIR}/
 cd ${STARTUP_DIR}
 
 WAR_FILE=`ls seldon-server*.war`
@@ -38,3 +33,4 @@ unzip -qx -d ./webapps/ROOT/ ${WAR_FILE} &> /dev/null
 # clear up
 rm -rf seldon-server* seldon-server*.war
 echo 'done'
+
