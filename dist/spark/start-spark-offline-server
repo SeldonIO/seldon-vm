@@ -4,7 +4,10 @@ set -o nounset
 set -o errexit
 
 STARTUP_DIR="$( cd "$( dirname "$0" )" && pwd )"
-PROJDIR=${STARTUP_DIR}/../..
+DIST_DIR=${STARTUP_DIR}/..
+[ -f ${DIST_DIR}/run_settings ] && source ${DIST_DIR}/run_settings
+
+RUN_START_SPARK_OFFLINE_DOCKER_OPTS=${RUN_START_SPARK_OFFLINE_DOCKER_OPTS:-}
 
 echo "--- starting spark offline ---"
 docker run -d \
@@ -14,5 +17,6 @@ docker run -d \
     --link zookeeper_server_container:zookeeper_server \
     --volumes-from api_server_data_logs_container \
     --volumes-from seldon-models \
+    ${RUN_START_SPARK_OFFLINE_DOCKER_OPTS} \
     ${REGISTRY_PREFIX}spark_image /bin/bash -c '/startup-scripts/run-keep-alive'
 
