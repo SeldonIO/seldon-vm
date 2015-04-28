@@ -9,6 +9,7 @@ RUN (apt-get update && \
 
 RUN pip install unicodecsv
 RUN pip install MySQL-python
+RUN pip install kazoo
 
 ADD apps /apps
 
