@@ -5,11 +5,13 @@ set -o errexit
 
 STARTUP_DIR="$( cd "$( dirname "$0" )" && pwd )"
 
-CLIENT=movielens
-MODEL=matrix_factorization
-MODEL=item_similarity
-MODEL=semantic_vectors
-#MODEL=word2vec
+if [[ $# < 2 ]]; then
+    echo "Need <client db name> <models to create>"
+    exit 1
+fi
+
+CLIENT=$1
+MODEL=$2
 
 set_zk_node() {
     local ZK_NODE_PATH="$1"
