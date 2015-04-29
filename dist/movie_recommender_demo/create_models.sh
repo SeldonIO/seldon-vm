@@ -11,6 +11,13 @@ MODEL=item_similarity
 MODEL=semantic_vectors
 MODEL=word2vec
 
+set_zk_node() {
+    local ZK_NODE_PATH="$1"
+    local ZK_NODE_VALUE="$2"
+
+    docker run --rm -i -t --name seldon_tools --link zookeeper_server_container:zk seldon-tools /seldon-tools/scripts/zookeeper/zkcmd.py --zk-hosts zk --cmd set --cmd-args "${ZK_NODE_PATH}" "${ZK_NODE_VALUE}"
+}
+
 do_matrix_factorization() {
     docker run --rm -i -t --name seldon_tools --link zookeeper_server_container:zk seldon-tools /seldon-tools/scripts/zookeeper/zkcmd.py --zk-hosts zk --cmd set --cmd-args /all_clients/movielens/offline/matrix-factorization '{"activate":true,"alpha":1,"days":1,"inputPath":"/seldon-models","iterations":5,"lambda":0.1,"local":true,"outputPath":"/seldon-models","rank":30,"startDay":1}'
 
@@ -40,15 +47,13 @@ do_semantic_vectors() {
 }
 
 do_word2vec() {
-    JOB_PATH=/all_clients/movielens/offline/sessionitems
-    JOB_CONFIG='{"inputPath":"/seldon-models","outputPath":"/seldon-models","startDay":1,"days":1,"maxIntraSessionGapSecs":-1,"minActionsPerUser":0,"maxActionsPerUser":100000}'
-    docker run --rm -i -t --name seldon_tools --link zookeeper_server_container:zk seldon-tools /seldon-tools/scripts/zookeeper/zkcmd.py --zk-hosts zk --cmd set --cmd-args "${JOB_CONFIG}" "${JOB_PATH}"
+    set_zk_node "all_clients/movielens/offline/sessionitems" \
+        '{"inputPath":"/seldon-models","outputPath":"/seldon-models","startDay":1,"days":1,"maxIntraSessionGapSecs":-1,"minActionsPerUser":0,"maxActionsPerUser":100000}'
 
     docker exec -it spark_offline_server_container bash -c "/spark-jobs/session-items.sh ${CLIENT}"
 
-    ZK_JOB_PATH=/all_clients/movielens/offline/word2vec
-    ZK_JOB_CONFIG='{"inputPath":"/seldon-models","outputPath":"/seldon-models","activate":true,"startDay":1,"days":1,"activate":true,"minWordCount":50,"vectorSize":200}'
-    docker run --rm -i -t --name seldon_tools --link zookeeper_server_container:zk seldon-tools /seldon-tools/scripts/zookeeper/zkcmd.py --zk-hosts zk --cmd set --cmd-args "${ZK_JOB_PATH}" "${ZK_JOB_CONFIG}"
+    set_zk_node "all_clients/movielens/offline/word2vec" \
+        '{"inputPath":"/seldon-models","outputPath":"/seldon-models","activate":true,"startDay":1,"days":1,"activate":true,"minWordCount":50,"vectorSize":200}'
 
     docker exec -it spark_offline_server_container bash -c "/spark-jobs/word2vec.sh ${CLIENT}"
 }
