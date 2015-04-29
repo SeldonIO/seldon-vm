@@ -16,7 +16,7 @@ CLIENT=$1
 
 DATA_FOLDER=/seldon-models
 START_DAY=1
-MEM="3g"
+MEM="2g"
 
 rm -rf ${DATA_FOLDER}/${CLIENT}/matrix-factorization/${START_DAY}
 
