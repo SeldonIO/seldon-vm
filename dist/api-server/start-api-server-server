@@ -7,6 +7,14 @@ STARTUP_DIR="$( cd "$( dirname "$0" )" && pwd )"
 
 echo "--- starting api-server ---"
 
+cat ${STARTUP_DIR}/seldon-server-settings.txt | docker run \
+    --rm \
+    -i -a stdin -a stdout -a stderr \
+    --name seldon_tools \
+    --link zookeeper_server_container:zookeeper_server \
+    seldon-tools /seldon-tools/scripts/zookeeper/zklines.py \
+        --zk-hosts zookeeper_server
+
 export EMBEDLY_KEY=${EMBEDLY_KEY:-}
 
 docker run -d \

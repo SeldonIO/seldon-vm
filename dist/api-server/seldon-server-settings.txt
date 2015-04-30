@@ -1,0 +1,5 @@
+set /config/memcached_servers memcache_server:11211
+set /config/dbcp {"dbs":[{"driverClassName":"com.mysql.jdbc.ReplicationDriver","jdbc":"jdbc:mysql:replication://mysql_server:3306,mysql_server:3306?characterEncoding=utf8&roundRobinLoadBalance=true&transformedBitIsBoolean=true&zeroDateTimeBehavior=convertToNull&rewriteBatchedStatements=true","name":"ClientDB","password":"mypass","user":"root"}]}
+set /all_clients/movielens {"DB_JNDI_NAME":"ClientDB"}
+set /config/default_strategy {"algorithms":[{"config":[],"filters":[],"includers":[],"name":"recentItemsRecommender"}],"combiner":"firstSuccessfulCombiner"}
+
