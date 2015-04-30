@@ -17,5 +17,6 @@ docker run -d \
     --volumes-from api_server_data_logs_container \
     --volumes-from seldon-models \
     -e EMBEDLY_KEY=$EMBEDLY_KEY \
+    -e SELDON_ZKSERVERS=zookeeper_server \
     ${REGISTRY_PREFIX}api_server_demo_image bash -c '/apps/api-server/startup.sh'
 

@@ -1,2 +1,1 @@
-export SELDON_ZKSERVERS=zookeeper_server
 
