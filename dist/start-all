@@ -41,7 +41,7 @@ ${STARTUP_DIR}/consul/start-consul
 #${STARTUP_DIR}/kafka/start-kafka-server
 ${STARTUP_DIR}/mysql/start-mysql-server
 ${STARTUP_DIR}/td-agent/start-td-agent-server
-${STARTUP_DIR}/spark/start-spark-streaming-server
+#${STARTUP_DIR}/spark/start-spark-streaming-server
 ${STARTUP_DIR}/spark/start-spark-offline-server
 ${STARTUP_DIR}/api-server/start-api-server-server
 
