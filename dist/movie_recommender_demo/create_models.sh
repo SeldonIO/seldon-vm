@@ -6,7 +6,7 @@ set -o errexit
 STARTUP_DIR="$( cd "$( dirname "$0" )" && pwd )"
 
 if [[ $# < 2 ]]; then
-    echo "Need <client db name> <models to create>"
+    echo "Need <client db name> <model to create>"
     exit 1
 fi
 
