@@ -4,10 +4,17 @@ set -o nounset
 set -o errexit
 
 STARTUP_DIR="$( cd "$( dirname "$0" )" && pwd )"
+DIST_DIR=${STARTUP_DIR}/..
 
 echo "--- starting zookeeper ---"
 #docker run --name zookeeper_server_container -d -p 2181:2181 -p 2888:2888 -p 3888:3888 ${REGISTRY_PREFIX}zookeeper_image
-docker run --name zookeeper_server_container -d ${REGISTRY_PREFIX}zookeeper_image
+
+docker run \
+    -d \
+    --name zookeeper_server_container \
+    -v ${DIST_DIR}/local_zookeeper_data:/tmp/zookeeper \
+    ${REGISTRY_PREFIX}zookeeper_image
+
 echo "waiting 2 secs"
 sleep 2
 echo "setup movielens zookeeper settings"
