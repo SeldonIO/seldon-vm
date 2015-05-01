@@ -19,8 +19,7 @@ for model in "${MODELS[@]}"
 do
     echo "Creating model $model for client $CLIENT"
     ${STARTUP_DIR}/create_models.sh ${CLIENT} ${model}
-    ### TODO put back in the activate_models.sh
-    ###${STARTUP_DIR}/activate_models.sh ${CLIENT} ${model}
+    ${STARTUP_DIR}/activate_models.sh ${CLIENT} ${model}
 done
 
 ${STARTUP_DIR}/../start-all
