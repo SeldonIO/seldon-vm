@@ -18,7 +18,7 @@ echo $WAR_FILE_FPATH
 
 WAR_FILE=$(basename "${WAR_FILE_FPATH}")
 
-API_SERVER_VERSION=$(echo "${WAR_FILE}"|sed -e 's/api-server-//' -e 's/.war$//')
+API_SERVER_VERSION=$(echo "${WAR_FILE}"|sed -e 's/seldon-server-//' -e 's/.war$//')
 echo "--- API_SERVER_VERSION[${API_SERVER_VERSION}] ---"
 echo "${API_SERVER_VERSION}" > __API_SERVER_VERSION__
 
