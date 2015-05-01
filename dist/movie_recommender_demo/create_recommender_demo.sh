@@ -13,8 +13,7 @@ CLIENT=movielens
 
 MODELS=( "matrix_factorization" "semantic_vectors" "word2vec" "item_similarity")
 
-### TODO put back in download_and_create_data.sh
-###${STARTUP_DIR}/download_and_create_data.sh $CLIENT
+${STARTUP_DIR}/download_and_create_data.sh $CLIENT
 for model in "${MODELS[@]}"
 do
     echo "Creating model $model for client $CLIENT"

@@ -1,0 +1,31 @@
+#!/bin/bash
+
+set -o nounset
+set -o errexit
+
+STARTUP_DIR="$( cd "$( dirname "$0" )" && pwd )"
+
+SELDON_DATA_DIR=${STARTUP_DIR}/seldon_data
+
+SAMPLE_SEED="MYSEED"
+SAMPLE_PERCENT=1
+
+if [ ! -f "${SELDON_DATA_DIR}/movielens_actions.csv.full" ];then
+    cp -v "${SELDON_DATA_DIR}/movielens_actions.csv" "${SELDON_DATA_DIR}/movielens_actions.csv.full"
+fi
+
+if [ ! -f "${SELDON_DATA_DIR}/movielens_actions.csv.sample" ];then
+    echo "creating ${SELDON_DATA_DIR}/movielens_actions.csv.sample"
+    head -1 "${SELDON_DATA_DIR}/movielens_actions.csv.full" > "${SELDON_DATA_DIR}/movielens_actions.csv.sample"
+    tail +2 "${SELDON_DATA_DIR}/movielens_actions.csv.full" | docker run \
+        --rm \
+        -i -a stdin -a stdout -a stderr \
+        --name="movielens_sample_data" \
+        seldon-tools /seldon-tools/scripts/import/sample.py --sample-percent ${SAMPLE_PERCENT} --random-seed ${SAMPLE_SEED} >> "${SELDON_DATA_DIR}/movielens_actions.csv.sample"
+fi
+
+if [ -r "${SELDON_DATA_DIR}/movielens_actions.csv.sample" ]; then
+    echo "using sample"
+    cp -v "${SELDON_DATA_DIR}/movielens_actions.csv.sample" "${SELDON_DATA_DIR}/movielens_actions.csv"
+fi
+
