@@ -3,7 +3,11 @@
 set -o nounset
 set -o errexit
 
-# set some defults for log dir usage
+STARTUP_DIR="$( cd "$( dirname "$0" )" && pwd )"
+DIST_DIR=${STARTUP_DIR}
+[ -f ${DIST_DIR}/run_settings ] && source ${DIST_DIR}/run_settings
+
+# set some defaults
 export USE_LOCAL_LOGS_DIR=${USE_LOCAL_LOGS_DIR:-}
 export USE_LOCAL_MYSQL_DATA_DIR=${USE_LOCAL_MYSQL_DATA_DIR-true}
 export USE_LOCAL_MODELS_DIR=${USE_LOCAL_MODELS_DIR-true}
@@ -14,8 +18,6 @@ echo "[USE_LOCAL_MYSQL_DATA_DIR=${USE_LOCAL_MYSQL_DATA_DIR}]"
 echo "[USE_LOCAL_MODELS_DIR=${USE_LOCAL_MODELS_DIR}]"
 echo "[REGISTRY_PREFIX=${REGISTRY_PREFIX}]"
 echo "*******************"
-
-STARTUP_DIR="$( cd "$( dirname "$0" )" && pwd )"
 
 ${STARTUP_DIR}/stop-all
 
