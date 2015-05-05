@@ -10,7 +10,6 @@ declare -a IMAGES_LIST=(
     "seldon-models" \
     "seldon-tools" \
     "consul_image" \
-    "semantic_vectors_image" \
     "movielens_data_transform" \
 )
 
