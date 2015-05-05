@@ -21,7 +21,6 @@ declare -a IMAGES_LIST=( \
     "api_server_image" \
     "seldon-models" \
     "api_server_demo_image" \
-    "semantic_vectors_image" \
     "movielens_data_transform" \
 )
 

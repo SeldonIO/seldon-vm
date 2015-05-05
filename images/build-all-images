@@ -31,7 +31,6 @@ declare -a IMAGES_LIST=( \
     "spark_image" \
     "seldon-tools" \
     "consul_image" \
-    "semantic_vectors_image" \
     "movielens_data_transform" \
 )
 

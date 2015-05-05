@@ -19,7 +19,6 @@ declare -a arr=( \
     "java7jre_image" \
     "tomcat7_image" \
     "consul_image" \
-    "semantic_vectors_image" \
 )
 
 ## now loop through the above array
