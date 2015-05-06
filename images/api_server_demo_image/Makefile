@@ -6,6 +6,9 @@ IMAGE_NAME=$(IMAGE)
 PROJ_DIR=../..
 -include $(PROJ_DIR)/build_settings
 
+#MOVIE_DEMO_FRONTEND_TAG=tags/v1.2
+MOVIE_DEMO_FRONTEND_TAG=
+
 dummy:
 	@echo dummy
 
@@ -19,7 +22,7 @@ webapps/api-spec/seldon.json:swagger-codegen
 
 webapps/movie-demo:
 	git clone https://github.com/SeldonIO/movie-demo-frontend
-	cd movie-demo-frontend ; git checkout tags/v1.2 ; npm install ; bower install ; cd ..
+	cd movie-demo-frontend ; git checkout $(MOVIE_DEMO_FRONTEND_TAG) ; npm install ; bower install ; cd ..
 	cd movie-demo-frontend ; grunt build ; cd ..
 	mkdir -p webapps/movie-demo
 	cp -R movie-demo-frontend/dist/* webapps/movie-demo
