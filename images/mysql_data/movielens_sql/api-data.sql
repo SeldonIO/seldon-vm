@@ -18,6 +18,6 @@ INSERT INTO consumer values('test4js', '',             'Test Client 4 js','test4
 INSERT INTO consumer values('test5consumer',               'test5secret',   'Test Client 5','test5',now(),NULL,1,0,'all');
 INSERT INTO consumer values('test5js', '',             'Test Client 5 js','test5',now(),NULL,1,0,'js');
 
-INSERT INTO consumer values('tnedddvlho', 'lzufhqbomz', 'Movielens Client','movielens',now(),NULL,1,0,'readonly');
+INSERT INTO consumer values('tnedddvlho', 'lzufhqbomz', 'Movielens Client','movielens',now(),NULL,1,0,'all');
 INSERT INTO consumer values('uggyecofcz', '',           'Movielens Client','movielens',now(),NULL,1,0,'js');
 
