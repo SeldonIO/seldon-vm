@@ -1,6 +1,7 @@
 #! /bin/bash
 set -o nounset
 set -o errexit
+##set -o xtrace
 
 STARTUP_DIR="$( cd "$( dirname "$0" )" && pwd )"
 
@@ -11,12 +12,17 @@ if [[ $# < 1 ]]; then
   exit 1
 fi
 VERSION=$1
+
+SELDON_SERVER_TAG=tags/${VERSION}
+SELDON_SERVER_TAG=
+
 cd ${STARTUP_DIR}
 rm -rf seldon-server* seldon-server*.war
 echo 'cloning seldon-server project from github'
 $CLONE_SELDON_SERVER
 cd ${STARTUP_DIR}/seldon-server
-##git checkout ${VERSION} &> /dev/null
+echo "using version[${SELDON_SERVER_TAG}]"
+git checkout ${SELDON_SERVER_TAG} &> /dev/null
 cd ${STARTUP_DIR}/seldon-server/server
 echo 'building seldon-server project'
 mvn package -DskipTests -q
