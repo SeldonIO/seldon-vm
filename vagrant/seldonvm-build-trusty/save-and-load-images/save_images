@@ -15,6 +15,11 @@ if [ ! -f "${IMAGES_DIR}/${TAR_FILE}.gz" ]; then
     tar cvf ${IMAGES_DIR}/${TAR_FILE} \
         --exclude=local_mysql_data \
         --exclude=local-logs \
+        --exclude=local-models \
+        --exclude=local_zookeeper_data \
+        --exclude=run_settings \
+        --exclude=movie_recommender_demo/raw_data \
+        --exclude=movie_recommender_demo/seldon_data \
         -C `dirname ${DIST_DIR_FPATH}`  `basename ${DIST_DIR_FPATH}`
     gzip -v ${IMAGES_DIR}/${TAR_FILE}
 else
