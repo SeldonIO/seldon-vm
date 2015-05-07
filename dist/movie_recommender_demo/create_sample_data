@@ -17,7 +17,7 @@ fi
 if [ ! -f "${SELDON_DATA_DIR}/movielens_actions.csv.sample" ];then
     echo "creating ${SELDON_DATA_DIR}/movielens_actions.csv.sample"
     head -1 "${SELDON_DATA_DIR}/movielens_actions.csv.full" > "${SELDON_DATA_DIR}/movielens_actions.csv.sample"
-    tail +2 "${SELDON_DATA_DIR}/movielens_actions.csv.full" | docker run \
+    tail -n+2 "${SELDON_DATA_DIR}/movielens_actions.csv.full" | docker run \
         --rm \
         -i -a stdin -a stdout -a stderr \
         --name="movielens_sample_data" \
@@ -26,6 +26,7 @@ fi
 
 if [ -r "${SELDON_DATA_DIR}/movielens_actions.csv.sample" ]; then
     echo "using sample"
+    docker run --rm -i -t -v ${SELDON_DATA_DIR}:/seldon_data seldon-tools bash -c 'rm -fv /seldon_data/movielens_actions.csv'
     cp -v "${SELDON_DATA_DIR}/movielens_actions.csv.sample" "${SELDON_DATA_DIR}/movielens_actions.csv"
 fi
 
