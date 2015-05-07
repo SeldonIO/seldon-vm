@@ -23,7 +23,7 @@ set_zk_node() {
 }
 
 do_matrix_factorization() {
-    set_zk_node '/config/mf' 'movielens'
+    set_zk_node '/config/mf' "${CLIENT}"
 }
 
 do_item_similarity() {
@@ -31,11 +31,11 @@ do_item_similarity() {
 }
 
 do_semantic_vectors() {
-    set_zk_node '/config/svtext' 'movielens'
+    set_zk_node '/config/svtext' "${CLIENT}"
 }
 
 do_word2vec() {
-    set_zk_node '/config/word2vec' 'movielens'
+    set_zk_node '/config/word2vec' "${CLIENT}"
 }
 
 case $MODEL in
