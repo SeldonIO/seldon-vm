@@ -4,7 +4,7 @@ set -o errexit
 
 STARTUP_DIR="$( cd "$( dirname "$0" )" && pwd )"
 PROJ_DIR=${STARTUP_DIR}/..
-source ${PROJ_DIR}/build_settings
+[ -f ${PROJ_DIR}/build_settings ] && source ${PROJ_DIR}/build_settings
 
 clean_images() {
     for i in "${IMAGES_LIST[@]}"; do
