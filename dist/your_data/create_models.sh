@@ -21,14 +21,14 @@ set_zk_node() {
 }
 
 do_matrix_factorization() {
-    set_zk_node '/all_clients/movielens/offline/matrix-factorization' \
+    set_zk_node "/all_clients/${CLIENT}/offline/matrix-factorization" \
         '{"activate":true,"alpha":1,"days":1,"inputPath":"/seldon-models","iterations":5,"lambda":0.1,"local":true,"outputPath":"/seldon-models","rank":30,"startDay":1}'
 
     docker exec -it spark_offline_server_container bash -c "/spark-jobs/matrix-factorization.sh ${CLIENT}"
 }
 
 do_item_similarity() {
-    set_zk_node '/all_clients/movielens/offline/similar-items' \
+    set_zk_node "/all_clients/${CLIENT}/offline/similar-items" \
         '{"inputPath":"/seldon-models","outputPath":"/seldon-models","days":1,"sample":0.25,"limit":100,"dimsum_threshold":0.5}'
 
     docker exec -it spark_offline_server_container bash -c "/spark-jobs/item-similarity.sh ${CLIENT}"
@@ -39,13 +39,13 @@ do_item_similarity() {
 do_semantic_vectors() {
     MYSQL_HOST=$(docker inspect --format '{{ .NetworkSettings.IPAddress }}' 'mysql_server_container')
     MYSQL_ROOT_PASSWORD=mypass
-    JOB_CONFIG='{"inputPath":"/seldon-models","outputPath":"/seldon-models","startDay":1,"days":1,"activate":true,"itemType":1,"itemLimit":10000,"tagAttrs":"movielens_tags_full","jdbc":"jdbc:mysql://'${MYSQL_HOST}':3306/movielens?user=root&password='${MYSQL_ROOT_PASSWORD}'&characterEncoding=utf8"}'
-    set_zk_node '/all_clients/movielens/offline/semvec' "${JOB_CONFIG}"
+    JOB_CONFIG='{"inputPath":"/seldon-models","outputPath":"/seldon-models","startDay":1,"days":1,"activate":true,"itemType":1,"itemLimit":10000,"tagAttrs":"movielens_tags_full","jdbc":"jdbc:mysql://'${MYSQL_HOST}':3306/'${CLIENT}'?user=root&password='${MYSQL_ROOT_PASSWORD}'&characterEncoding=utf8"}'
+    set_zk_node "/all_clients/${CLIENT}/offline/semvec" "${JOB_CONFIG}"
 
     docker run --rm -i -t \
     --volumes-from seldon-models \
     --link zookeeper_server_container:zk \
-    seldonio/semantic-vectors-for-seldon bash -c './semvec/semantic-vectors.py --client movielens --zookeeper zk:2181'
+    seldonio/semantic-vectors-for-seldon bash -c "./semvec/semantic-vectors.py --client ${CLIENT} --zookeeper zk:2181"
 }
 
 do_word2vec() {
