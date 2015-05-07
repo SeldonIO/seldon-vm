@@ -49,12 +49,12 @@ do_semantic_vectors() {
 }
 
 do_word2vec() {
-    set_zk_node "all_clients/movielens/offline/sessionitems" \
+    set_zk_node "all_clients/${CLIENT}/offline/sessionitems" \
         '{"inputPath":"/seldon-models","outputPath":"/seldon-models","startDay":1,"days":1,"maxIntraSessionGapSecs":-1,"minActionsPerUser":0,"maxActionsPerUser":100000}'
 
     docker exec -it spark_offline_server_container bash -c "/spark-jobs/session-items.sh ${CLIENT}"
 
-    set_zk_node "all_clients/movielens/offline/word2vec" \
+    set_zk_node "all_clients/${CLIENT}/offline/word2vec" \
         '{"inputPath":"/seldon-models","outputPath":"/seldon-models","activate":true,"startDay":1,"days":1,"activate":true,"minWordCount":50,"vectorSize":200}'
 
     docker exec -it spark_offline_server_container bash -c "/spark-jobs/word2vec.sh ${CLIENT}"
