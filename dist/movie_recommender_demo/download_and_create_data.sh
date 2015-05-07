@@ -13,6 +13,7 @@ if [[ $# < 1 ]]; then
 fi
 
 CLIENT=$1
+YOUR_DATA_DIR=${STARTUP_DIR}/../your_data
 
 mkdir -p raw_data
 mkdir -p seldon_data
@@ -25,16 +26,42 @@ if [ "${CREATE_MOVIELENS_SAMPLE_DATA:-}" == "true" ]; then
     ${STARTUP_DIR}/create_sample_data
 fi
 
-#clear actions
-docker run --name="movielens_create_item_attrs" -it --rm -v ${STARTUP_DIR}/seldon_data:/movielens/seldon --link mysql_server_container:mysql_server  --link consul:consul seldon-tools /seldon-tools/scripts/import/clear_actions.sh ${CLIENT}
+clear_actions() {
+    echo "-- clearing actions for ${CLIENT} ---"
+    ${YOUR_DATA_DIR}/clear_actions.sh ${CLIENT}
+}
 
-# import item attributes and data (movies) into database
-docker run --name="movielens_create_item_attrs" -it --rm -v ${STARTUP_DIR}/seldon_data:/movielens/seldon --link mysql_server_container:mysql_server  --link consul:consul seldon-tools /seldon-tools/scripts/import/add_attr_schema.sh ${CLIENT} /movielens/seldon/movielens_items.json
+add_item_attributes() {
+    echo "-- adding item attributes for ${CLIENT} --"
+    local SCHEMA_FILE=movielens_items.json
+    cp -v ${STARTUP_DIR}/seldon_data/${SCHEMA_FILE} ${YOUR_DATA_DIR}/schema/${SCHEMA_FILE}
+    ${YOUR_DATA_DIR}/load_schema.sh ${CLIENT} ${SCHEMA_FILE}
+}
 
-docker run --name="movielens_import_items" -it --rm -v ${STARTUP_DIR}/seldon_data:/movielens/seldon --link mysql_server_container:mysql_server  --link consul:consul seldon-tools /seldon-tools/scripts/import/add_items.sh ${CLIENT} /movielens/seldon/movielens_items.csv
+import_items() {
+    echo "-- importing items for ${CLIENT}"
+    local ITEMS_FILE=movielens_items.csv
+    cp -v ${STARTUP_DIR}/seldon_data/${ITEMS_FILE} ${YOUR_DATA_DIR}/items_data/${ITEMS_FILE}
+    ${YOUR_DATA_DIR}/load_items.sh ${CLIENT} ${ITEMS_FILE}
+}
 
-docker run --name="movielens_import_users" -it --rm -v ${STARTUP_DIR}/seldon_data:/movielens/seldon --link mysql_server_container:mysql_server  --link consul:consul seldon-tools /seldon-tools/scripts/import/add_users.sh ${CLIENT} /movielens/seldon/movielens_users.csv
+import_users() {
+    echo "-- importing users for ${CLIENT}"
+    local USERS_FILE=movielens_users.csv
+    cp -v ${STARTUP_DIR}/seldon_data/${USERS_FILE} ${YOUR_DATA_DIR}/users_data/${USERS_FILE}
+    ${YOUR_DATA_DIR}/load_users.sh ${CLIENT} ${USERS_FILE}
+}
 
-# create user actions (movie view history)
-docker run --name="movielens_create_actions" -it --rm -v ${STARTUP_DIR}/seldon_data:/movielens/seldon --volumes-from seldon-models --link mysql_server_container:mysql_server  --link consul:consul seldon-tools /seldon-tools/scripts/import/create_actions_json.sh ${CLIENT} /movielens/seldon/movielens_actions.csv /seldon-models/${CLIENT}/actions/1/actions.json
+create_user_actions() {
+    echo "-- creating user actions for ${CLIENT}"
+    local ACTIONS_FILE=movielens_actions.csv
+    cp -v ${STARTUP_DIR}/seldon_data/${ACTIONS_FILE} ${YOUR_DATA_DIR}/actions_data/${ACTIONS_FILE}
+    ${YOUR_DATA_DIR}/load_actions.sh ${CLIENT} ${ACTIONS_FILE}
+}
+
+clear_actions
+add_item_attributes
+import_items
+import_users
+create_user_actions
 
