@@ -6,8 +6,7 @@ IMAGE_NAME=$(IMAGE)
 PROJ_DIR=../..
 -include $(PROJ_DIR)/build_settings
 
-#MOVIE_DEMO_FRONTEND_TAG=tags/v1.2
-MOVIE_DEMO_FRONTEND_TAG=
+MOVIE_DEMO_FRONTEND_TAG=tags/v1.3
 
 dummy:
 	@echo dummy
