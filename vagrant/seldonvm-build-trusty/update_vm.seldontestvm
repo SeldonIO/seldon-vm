@@ -7,6 +7,6 @@ STARTUP_DIR="$( cd "$( dirname "$0" )" && pwd )"
 
 echo "--- Updating VM ---"
 
-vagrant ssh -c 'mkdir -p ~/seldon; cd seldon; echo "greetings from Seldon!" > seldon.txt'
+vagrant ssh -c '/vagrant/save-and-load-images/load_images'
 vagrant ssh -c 'cp /vagrant/build-details.txt ~/seldon/'
 
